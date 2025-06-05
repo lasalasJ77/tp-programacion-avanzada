@@ -10,7 +10,7 @@ public class ConexionSQL {
     public static Connection getConexion() throws SQLException {
         if (conexion == null || conexion.isClosed()) {
             conexion =
-         DriverManager.getConnection("jdbc:mysql://localhost:3306/alumnos", "root", "1234");
+         DriverManager.getConnection("jdbc:mysql://localhost:3306/alumnos", "root", "");
 
         }
         return conexion;

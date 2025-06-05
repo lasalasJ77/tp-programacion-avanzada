@@ -1,12 +1,13 @@
 package DAOImpl;
 
+import DAO.Alumno.AlumnoDAO;
 import model.Alumno;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AlumnoTXTDAOImpl {
+public class AlumnoTXTDAOImpl implements AlumnoDAO {
 
     private final String archivo = "alumnos.txt";
 

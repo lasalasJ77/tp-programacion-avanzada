@@ -1,6 +1,7 @@
 package gui;
 
 import DAOImpl.AlumnoSQLDAOImpl;
+import DAOImpl.AlumnoTXTDAOImpl;
 import model.Alumno;
 import service.alumno.AlumnoService;
 
@@ -17,7 +18,9 @@ public class AlumnoForm extends JFrame {
     private final JCheckBox chkMostrarEliminados = new JCheckBox("Ver eliminados");
 
     private final AlumnoTable tabla = new AlumnoTable();
-    private final AlumnoService service;
+    private AlumnoService service;
+
+    private final JComboBox<String> comboAlmacenarDatos = new JComboBox<>(new String[] {"MySQL", "TXT"});
 
     public AlumnoForm() {
         setTitle("Gestión de Alumnos");
@@ -25,7 +28,6 @@ public class AlumnoForm extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        // Cambia entre TXT o SQL según quieras:
         // this.service = new AlumnoService(new AlumnoTXTDAOImpl());
         this.service = new AlumnoService(new AlumnoSQLDAOImpl());
 
@@ -34,13 +36,18 @@ public class AlumnoForm extends JFrame {
     }
 
     private void initUI() {
-        JPanel panelForm = new JPanel(new GridLayout(3, 4, 5, 5));
+        JPanel panelForm = new JPanel(new GridLayout(4, 4, 5, 5));
         panelForm.add(new JLabel("DNI:"));
         panelForm.add(txtDni);
         panelForm.add(new JLabel("Apellido:"));
         panelForm.add(txtApellido);
         panelForm.add(new JLabel("Nombre:"));
         panelForm.add(txtNombre);
+        panelForm.add(new JLabel("Almacenar datos:"));
+        panelForm.add(comboAlmacenarDatos);
+
+        configurarComboAlmacenarDatos();
+
 
         JButton btnGuardar = new JButton("Guardar");
         JButton btnModificar = new JButton("Modificar");
@@ -133,6 +140,24 @@ public class AlumnoForm extends JFrame {
 
     private void mostrarError(String mensaje) {
         JOptionPane.showMessageDialog(this, mensaje, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    // Cambia entre TXT o SQL según quieras:
+    private void configurarComboAlmacenarDatos() {
+        comboAlmacenarDatos.addActionListener(e -> {
+            String fuente = (String) comboAlmacenarDatos.getSelectedItem();
+
+            if ("MySQL".equals(fuente)) {
+                System.out.println("Datos de MySQL...");
+                this.service = new AlumnoService(new AlumnoSQLDAOImpl());
+            } else if ("TXT".equals(fuente)) {
+                System.out.println("Datos de archivo TXT...");
+                this.service = new AlumnoService(new AlumnoTXTDAOImpl());
+            }
+
+            // Recargar los datos después de cambiar la fuente
+            cargarTabla();
+        });
     }
 
 }
