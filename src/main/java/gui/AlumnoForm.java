@@ -19,6 +19,8 @@ public class AlumnoForm extends JFrame {
 
     private final AlumnoTable tabla = new AlumnoTable();
     private AlumnoService service;
+    private AlumnoSQLDAOImpl mysqlDAO;
+    private AlumnoTXTDAOImpl txtDAO;
 
     private final JComboBox<String> comboAlmacenarDatos = new JComboBox<>(new String[] {"MySQL", "TXT"});
 
@@ -28,8 +30,9 @@ public class AlumnoForm extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        // this.service = new AlumnoService(new AlumnoTXTDAOImpl());
-        this.service = new AlumnoService(new AlumnoSQLDAOImpl());
+        this.mysqlDAO = new AlumnoSQLDAOImpl();
+        this.txtDAO = new AlumnoTXTDAOImpl();
+        this.service = new AlumnoService(mysqlDAO);
 
         initUI();
         cargarTabla();
@@ -148,14 +151,10 @@ public class AlumnoForm extends JFrame {
             String fuente = (String) comboAlmacenarDatos.getSelectedItem();
 
             if ("MySQL".equals(fuente)) {
-                System.out.println("Datos de MySQL...");
-                this.service = new AlumnoService(new AlumnoSQLDAOImpl());
+                this.service.setDao(mysqlDAO);
             } else if ("TXT".equals(fuente)) {
-                System.out.println("Datos de archivo TXT...");
-                this.service = new AlumnoService(new AlumnoTXTDAOImpl());
+                this.service.setDao(txtDAO);
             }
-
-            // Recargar los datos después de cambiar la fuente
             cargarTabla();
         });
     }

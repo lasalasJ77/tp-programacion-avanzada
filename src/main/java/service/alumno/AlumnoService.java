@@ -7,9 +7,13 @@ import java.util.List;
 
 public class AlumnoService {
 
-    private final AlumnoDAO dao;
+    private AlumnoDAO dao;
 
     public AlumnoService(AlumnoDAO dao) {
+        this.dao = dao;
+    }
+
+    public void setDao(AlumnoDAO dao) {
         this.dao = dao;
     }
 
