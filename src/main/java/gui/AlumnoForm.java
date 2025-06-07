@@ -15,7 +15,12 @@ public class AlumnoForm extends JFrame {
     private final JTextField txtDni = new JTextField(10);
     private final JTextField txtApellido = new JTextField(10);
     private final JTextField txtNombre = new JTextField(10);
+    private final JTextField txtEmail = new JTextField(10);
+    private final JTextField txtTelefono = new JTextField(10);
+    private final JTextField txtDireccion = new JTextField(10);
     private final JCheckBox chkMostrarEliminados = new JCheckBox("Ver eliminados");
+
+    private String dniActualAlumno;
 
     private final AlumnoTable tabla = new AlumnoTable();
     private AlumnoService service;
@@ -46,6 +51,12 @@ public class AlumnoForm extends JFrame {
         panelForm.add(txtApellido);
         panelForm.add(new JLabel("Nombre:"));
         panelForm.add(txtNombre);
+        panelForm.add(new JLabel("Email:"));
+        panelForm.add(txtEmail);
+        panelForm.add(new JLabel("Telefono:"));
+        panelForm.add(txtTelefono);
+        panelForm.add(new JLabel("Direccion:"));
+        panelForm.add(txtDireccion);
         panelForm.add(new JLabel("Almacenar datos:"));
         panelForm.add(comboAlmacenarDatos);
 
@@ -55,15 +66,18 @@ public class AlumnoForm extends JFrame {
         JButton btnGuardar = new JButton("Guardar");
         JButton btnModificar = new JButton("Modificar");
         JButton btnEliminar = new JButton("Eliminar");
+        JButton btnConsultar = new JButton("Consultar");
 
         btnGuardar.addActionListener(e -> guardar());
         btnModificar.addActionListener(e -> modificar());
         btnEliminar.addActionListener(e -> eliminar());
+        btnConsultar.addActionListener(e -> consultar());
 
         JPanel panelBotones = new JPanel();
         panelBotones.add(btnGuardar);
         panelBotones.add(btnModificar);
         panelBotones.add(btnEliminar);
+        panelBotones.add(btnConsultar);
         panelBotones.add(chkMostrarEliminados);
 
         chkMostrarEliminados.addActionListener(e -> cargarTabla());
@@ -76,9 +90,13 @@ public class AlumnoForm extends JFrame {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 int fila = tabla.getSelectedRow();
                 if (fila != -1) {
-                    txtDni.setText(tabla.getValueAt(fila, 0).toString());
+                    dniActualAlumno = tabla.getValueAt(fila,0).toString();
+                    txtDni.setText(dniActualAlumno);
                     txtApellido.setText(tabla.getValueAt(fila, 1).toString());
                     txtNombre.setText(tabla.getValueAt(fila, 2).toString());
+                    txtEmail.setText(tabla.getValueAt(fila, 3).toString());
+                    txtTelefono.setText(tabla.getValueAt(fila, 4).toString());
+                    txtDireccion.setText(tabla.getValueAt(fila, 5).toString());
                 }
             }
         });
@@ -95,7 +113,7 @@ public class AlumnoForm extends JFrame {
 
     private void guardar() {
         try {
-            Alumno a = new Alumno(txtDni.getText(), txtApellido.getText(), txtNombre.getText(), false);
+            Alumno a = new Alumno(txtDni.getText(), txtApellido.getText(), txtNombre.getText(), txtEmail.getText(), txtTelefono.getText(), txtDireccion.getText(), false);
             service.registrarAlumno(a);
             limpiar();
             cargarTabla();
@@ -106,8 +124,15 @@ public class AlumnoForm extends JFrame {
 
     private void modificar() {
         try {
-            Alumno a = new Alumno(txtDni.getText(), txtApellido.getText(), txtNombre.getText(), false);
+            String dniNuevoAlumno = txtDni.getText();
+            if(!dniActualAlumno.equals(dniNuevoAlumno)) {
+                mostrarError("No se puede modificar el DNI");
+                limpiar();
+                return;
+            }
+            Alumno a = new Alumno(txtDni.getText(), txtApellido.getText(), txtNombre.getText(), txtEmail.getText(), txtTelefono.getText(), txtDireccion.getText(), false);
             service.modificarAlumno(a);
+            JOptionPane.showMessageDialog(this, "Alumno modificado exitosamente.", "Acción exitosa", JOptionPane.INFORMATION_MESSAGE);
             limpiar();
             cargarTabla();
         } catch (Exception ex) {
@@ -127,6 +152,7 @@ public class AlumnoForm extends JFrame {
             try {
                 String dni = tabla.getValueAt(fila, 0).toString();
                 service.eliminarAlumno(dni);
+                JOptionPane.showMessageDialog(this, "Alumno eliminado exitosamente.", "Acción exitosa", JOptionPane.INFORMATION_MESSAGE);
                 limpiar();
                 cargarTabla();
             } catch (Exception ex) {
@@ -135,17 +161,53 @@ public class AlumnoForm extends JFrame {
         }
     }
 
+    private void consultar() {
+        int fila = tabla.getSelectedRow();
+        if (fila == -1) {
+            mostrarError("Seleccione un alumno para consultar.");
+            return;
+        }
+        Alumno alumnoFila = tabla.getAlumnoFila(fila);
+
+        tabla.setMostrarColumnas(true);
+
+        String info = String.format("""
+        DNI: %s
+        Apellido: %s
+        Nombre: %s
+        Dirección: %s
+        Teléfono: %s
+        Email: %s
+        Estado: %s
+        """,
+                alumnoFila.getDni(),
+                alumnoFila.getApellido(),
+                alumnoFila.getNombre(),
+                alumnoFila.getDireccion(),
+                alumnoFila.getTelefono(),
+                alumnoFila.getEmail(),
+                alumnoFila.isEliminado() ? "Eliminado" : "Activo"
+        );
+
+        JOptionPane.showMessageDialog(this, info, "Ficha Completa del Alumno", JOptionPane.INFORMATION_MESSAGE);
+
+        tabla.setMostrarColumnas(false);
+        limpiar();
+    }
+
     private void limpiar() {
         txtDni.setText("");
         txtApellido.setText("");
         txtNombre.setText("");
+        txtEmail.setText("");
+        txtTelefono.setText("");
+        txtDireccion.setText("");
     }
 
     private void mostrarError(String mensaje) {
         JOptionPane.showMessageDialog(this, mensaje, "Error", JOptionPane.ERROR_MESSAGE);
     }
 
-    // Cambia entre TXT o SQL según quieras:
     private void configurarComboAlmacenarDatos() {
         comboAlmacenarDatos.addActionListener(e -> {
             String fuente = (String) comboAlmacenarDatos.getSelectedItem();
