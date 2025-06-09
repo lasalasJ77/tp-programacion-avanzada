@@ -10,13 +10,13 @@ public class Alumno {
     private String email;
     private boolean eliminado;
 
-    public Alumno(String dni, String apellido, String nombre, String direccion, String telefono, String email, Boolean eliminado) {
+    public Alumno(String dni, String apellido, String nombre, String email, String telefono, String direccion, Boolean eliminado) {
         this.dni = dni;
         this.apellido = apellido;
         this.nombre = nombre;
-        this.direccion = direccion;
-        this.telefono = telefono;
         this.email = email;
+        this.telefono = telefono;
+        this.direccion = direccion;
         this.eliminado = eliminado;
     }
 
