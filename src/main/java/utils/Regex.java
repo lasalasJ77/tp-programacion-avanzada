@@ -1,6 +1,6 @@
 package utils;
 
-import model.Alumno;
+import model.Student;
 
 public class Regex {
     public static final String REGEX_EMAIL = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
@@ -10,21 +10,21 @@ public class Regex {
         return email != null && email.matches(REGEX_EMAIL);
     }
 
-    public static boolean esDniValido(String dni) {
-        return dni != null && dni.matches(REGEX_DNI);
+    public static boolean esDniValido(Integer dni) {
+        return dni != null && dni.toString().matches(REGEX_DNI);
     }
 
     public static boolean esTelefonoValido(String telefono) {
         return telefono != null && telefono.matches(REGEX_TELEFONO);
     }
-    public static void validarAlumno(Alumno alumno) throws Exception {
-        if (!esEmailValido(alumno.getEmail())) {
+    public static void validarAlumno(Student student) throws Exception {
+        if (!esEmailValido(student.getEmail())) {
             throw new Exception("Email inválido");
         }
-        if (!esDniValido(alumno.getDni())) {
+        if (!esDniValido(student.getDni())) {
             throw new Exception("DNI inválido");
         }
-        if (!esTelefonoValido(alumno.getTelefono())) {
+        if (!esTelefonoValido(student.getPhone())) {
             throw new Exception("Teléfono inválido");
         }
     }
