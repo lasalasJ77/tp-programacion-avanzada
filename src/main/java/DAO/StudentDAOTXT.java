@@ -4,6 +4,8 @@
  */
 package DAO;
 
+import Exceptions.DAOException;
+import Exceptions.StudentExistsException;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -12,16 +14,13 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Student;
 
-/**
- *
- * @author alepr
- */
 public class StudentDAOTXT extends GenericDAO<Student, Integer> {
     private final RandomAccessFile raf;
             
@@ -36,16 +35,17 @@ public class StudentDAOTXT extends GenericDAO<Student, Integer> {
     
     
     @Override
-    public void create(Student student) throws DAOException {
-        if (exist(student.getDni())) {
-            throw new DAOException("El alumno con DNI "+student.getDni()+" ya existe");
-        }
-        
+    public void create(Student student) throws DAOException, StudentExistsException {
         try {
-            // insertar en TXT
-            raf.seek(raf.length()); // Me posocionó al final del archivo
-            //raf.writeBytes(alu+System.lineSeparator());
+            if (exist(student.getDni())) {
+                throw new StudentExistsException("El alumno con el DNI " + student.getDni() + " ya existe");
+            }
+            raf.seek(raf.length());
+            
             raf.writeBytes(student.toString()+System.lineSeparator());
+        } catch (StudentExistsException ex) {
+            Logger.getLogger(StudentDAOTXT.class.getName()).log(Level.SEVERE, null, ex);
+            throw new StudentExistsException(ex.getMessage());
         } catch (IOException ex) {
             Logger.getLogger(StudentDAOTXT.class.getName()).log(Level.SEVERE, null, ex);
             throw new DAOException("Error de escritura ("+ex.getMessage()+")");

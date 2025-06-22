@@ -5,10 +5,6 @@ package enums;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Enum.java to edit this template
  */
 
-/**
- *
- * @author alepr
- */
 public enum CrudAction {
     CREATE,
     READ,

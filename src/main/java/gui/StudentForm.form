@@ -48,46 +48,44 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
-                          <Group type="103" groupAlignment="1" attributes="0">
-                              <Group type="102" alignment="1" attributes="0">
-                                  <Component id="lastNameLabel" min="-2" pref="60" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="lastNameInput" min="-2" pref="150" max="-2" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="1" attributes="0">
-                                  <Component id="nameLabel" min="-2" pref="60" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="nameInput" min="-2" pref="150" max="-2" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="1" attributes="0">
-                                  <Component id="dnitLabel" min="-2" pref="60" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="dniInput" min="-2" pref="150" max="-2" attributes="0"/>
-                              </Group>
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Component id="errorLabel" max="32767" attributes="0"/>
+                      <Group type="103" groupAlignment="1" attributes="0">
+                          <Group type="102" alignment="1" attributes="0">
+                              <Component id="lastNameLabel" min="-2" pref="60" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="lastNameInput" min="-2" pref="150" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace pref="46" max="32767" attributes="0"/>
-                          <Group type="103" groupAlignment="1" attributes="0">
-                              <Group type="102" alignment="1" attributes="0">
-                                  <Component id="emailLabel" min="-2" pref="60" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="emailInput" min="-2" pref="150" max="-2" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="1" attributes="0">
-                                  <Component id="phoneLabel" min="-2" pref="60" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="phoneInput" min="-2" pref="150" max="-2" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="1" attributes="0">
-                                  <Component id="addressLabel" min="-2" pref="60" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="addressInput" min="-2" pref="150" max="-2" attributes="0"/>
-                              </Group>
+                          <Group type="102" alignment="1" attributes="0">
+                              <Component id="nameLabel" min="-2" pref="60" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="nameInput" min="-2" pref="150" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="1" attributes="0">
+                              <Component id="dnitLabel" min="-2" pref="60" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="dniInput" min="-2" pref="150" max="-2" attributes="0"/>
                           </Group>
                       </Group>
+                  </Group>
+                  <EmptySpace pref="44" max="32767" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
-                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          <Component id="emailLabel" min="-2" pref="60" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="emailInput" min="-2" pref="150" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="1" attributes="0">
+                          <Component id="phoneLabel" min="-2" pref="60" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="phoneInput" min="-2" pref="150" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="1" attributes="0">
+                          <Component id="addressLabel" min="-2" pref="60" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="addressInput" min="-2" pref="150" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="1" attributes="0">
                           <Component id="buttonBack" min="-2" pref="100" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="buttonSave" min="-2" pref="100" max="-2" attributes="0"/>
@@ -139,6 +137,7 @@
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="buttonBack" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="buttonSave" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="errorLabel" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -148,7 +147,7 @@
       <SubComponents>
         <Component class="javax.swing.JTextField" name="dniInput">
           <Properties>
-            <Property name="toolTipText" type="java.lang.String" value="Inserte el host de MySQL"/>
+            <Property name="toolTipText" type="java.lang.String" value="Ingrese el DNI del alumno"/>
             <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <Events>
@@ -169,7 +168,7 @@
         </Component>
         <Component class="javax.swing.JTextField" name="nameInput">
           <Properties>
-            <Property name="toolTipText" type="java.lang.String" value="Inserte el host de MySQL"/>
+            <Property name="toolTipText" type="java.lang.String" value="Ingrese el nombre del alumno"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="nameInputActionPerformed"/>
@@ -183,7 +182,7 @@
         </Component>
         <Component class="javax.swing.JTextField" name="lastNameInput">
           <Properties>
-            <Property name="toolTipText" type="java.lang.String" value="Inserte el host de MySQL"/>
+            <Property name="toolTipText" type="java.lang.String" value="Ingrese el apellido del alumno"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="lastNameInputActionPerformed"/>
@@ -197,7 +196,7 @@
         </Component>
         <Component class="javax.swing.JTextField" name="addressInput">
           <Properties>
-            <Property name="toolTipText" type="java.lang.String" value="Inserte el host de MySQL"/>
+            <Property name="toolTipText" type="java.lang.String" value="Ingrese la direcci&#xf3;n del alumno"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addressInputActionPerformed"/>
@@ -211,7 +210,7 @@
         </Component>
         <Component class="javax.swing.JTextField" name="phoneInput">
           <Properties>
-            <Property name="toolTipText" type="java.lang.String" value="Inserte el host de MySQL"/>
+            <Property name="toolTipText" type="java.lang.String" value="Ingrese el tel&#xe9;fono del alumno"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="phoneInputActionPerformed"/>
@@ -225,7 +224,7 @@
         </Component>
         <Component class="javax.swing.JTextField" name="emailInput">
           <Properties>
-            <Property name="toolTipText" type="java.lang.String" value="Inserte el host de MySQL"/>
+            <Property name="toolTipText" type="java.lang.String" value="Ingrese el email del alumno"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="emailInputActionPerformed"/>
@@ -246,6 +245,13 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="buttonBackActionPerformed"/>
           </Events>
+        </Component>
+        <Component class="javax.swing.JLabel" name="errorLabel">
+          <Properties>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="0" green="0" red="ff" type="rgb"/>
+            </Property>
+          </Properties>
         </Component>
       </SubComponents>
     </Container>

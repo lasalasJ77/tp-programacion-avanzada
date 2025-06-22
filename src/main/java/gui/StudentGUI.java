@@ -4,12 +4,14 @@
  */
 package gui;
 
-import DAO.DAOException;
+import Exceptions.DAOException;
 import DAO.DAOFactory;
-import DAO.DAOFactoryException;
+import Exceptions.DAOFactoryException;
 import DAO.GenericDAO;
 import DAO.StudentDAOSQL;
 import DAO.StudentDAOTXT;
+import Exceptions.ModalException;
+import Exceptions.StudentExistsException;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
@@ -21,11 +23,9 @@ import enums.CrudAction;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JOptionPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
-/**
- *
- * @author alepr
- */
 public class StudentGUI extends javax.swing.JFrame {
     
     private GenericDAO<Student, Integer> dao;
@@ -33,9 +33,6 @@ public class StudentGUI extends javax.swing.JFrame {
     private StudentDAOTXT txtDAO;
     private final StudentTableModel studentModel;
 
-    /**
-     * Creates new form AlumnosForm
-     */
     public StudentGUI() {
         initComponents();
         
@@ -46,8 +43,29 @@ public class StudentGUI extends javax.swing.JFrame {
         
         studentModel = new StudentTableModel();
         tableStudents.setModel(studentModel);
+        initListeners();
     }
 
+    private void initListeners() {
+    tableStudents.getSelectionModel().addListSelectionListener((ListSelectionEvent event) -> {
+        if (event.getValueIsAdjusting()) return;
+        
+        
+        boolean rowSelected = tableStudents.getSelectedRow() != -1;
+        
+        buttonDelete.setEnabled(rowSelected);
+        if (rowSelected) {
+            Student student = studentModel.getStudentByRow(tableStudents.getSelectedRow());
+            if (student.isDeleted()) {
+                buttonDelete.setEnabled(false);
+            }
+        }
+        
+        buttonUpdate.setEnabled(rowSelected);
+        buttonSeeDetail.setEnabled(rowSelected);
+    });
+}
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -124,7 +142,7 @@ public class StudentGUI extends javax.swing.JFrame {
         userLabel.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         userLabel.setText("Usuario:");
 
-        userInput.setToolTipText("Inserte el host de MySQL");
+        userInput.setToolTipText("Inserte el usuario de MySQL");
         userInput.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 userInputActionPerformed(evt);
@@ -137,7 +155,7 @@ public class StudentGUI extends javax.swing.JFrame {
         portLabel.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         portLabel.setText("Puerto:");
 
-        portInput.setToolTipText("Inserte el host de MySQL");
+        portInput.setToolTipText("Inserte el puerto de MySQL");
         portInput.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 portInputActionPerformed(evt);
@@ -233,6 +251,7 @@ public class StudentGUI extends javax.swing.JFrame {
         });
 
         buttonTXT.setText("...");
+        buttonTXT.setToolTipText("Seleccionar archivo");
         buttonTXT.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         buttonTXT.setMargin(new java.awt.Insets(2, 14, 2, 14));
         buttonTXT.addActionListener(new java.awt.event.ActionListener() {
@@ -301,6 +320,7 @@ public class StudentGUI extends javax.swing.JFrame {
         );
 
         buttonCreate.setText("Crear");
+        buttonCreate.setEnabled(false);
         buttonCreate.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 buttonCreateActionPerformed(evt);
@@ -308,6 +328,7 @@ public class StudentGUI extends javax.swing.JFrame {
         });
 
         buttonUpdate.setText("Modificar");
+        buttonUpdate.setEnabled(false);
         buttonUpdate.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 buttonUpdateActionPerformed(evt);
@@ -315,6 +336,7 @@ public class StudentGUI extends javax.swing.JFrame {
         });
 
         buttonDelete.setText("Eliminar");
+        buttonDelete.setEnabled(false);
         buttonDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 buttonDeleteActionPerformed(evt);
@@ -322,13 +344,15 @@ public class StudentGUI extends javax.swing.JFrame {
         });
 
         buttonSeeDetail.setText("Ver detalle");
+        buttonSeeDetail.setEnabled(false);
         buttonSeeDetail.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 buttonSeeDetailActionPerformed(evt);
             }
         });
 
-        buttonSeeDeleted.setText("Ver eliminados");
+        buttonSeeDeleted.setText("Ver inactivos");
+        buttonSeeDeleted.setEnabled(false);
         buttonSeeDeleted.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 buttonSeeDeletedActionPerformed(evt);
@@ -425,6 +449,8 @@ public class StudentGUI extends javax.swing.JFrame {
             dao = mysqlDAO;
             JOptionPane.showMessageDialog(this, "Se ha conectado de forma exitosa", "Conexión", JOptionPane.INFORMATION_MESSAGE);
             setStudents();
+            buttonCreate.setEnabled(true);
+            buttonSeeDeleted.setEnabled(true);
         } catch (DAOFactoryException | DAOException ex) {
             Logger.getLogger(StudentGUI.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Error en el DAO", JOptionPane.ERROR_MESSAGE);
@@ -450,6 +476,8 @@ public class StudentGUI extends javax.swing.JFrame {
             txtDAO = (StudentDAOTXT)DAOFactory.createDao(config);
             dao = txtDAO;
             setStudents();
+            buttonCreate.setEnabled(true);
+            buttonSeeDeleted.setEnabled(true);
         } catch (DAOFactoryException | DAOException ex) {
             Logger.getLogger(StudentGUI.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Error en el DAO", JOptionPane.ERROR_MESSAGE);
@@ -467,8 +495,13 @@ public class StudentGUI extends javax.swing.JFrame {
             
             JOptionPane.showMessageDialog(this, "Se ha creado el alumno de forma exitosa", "Creación", JOptionPane.INFORMATION_MESSAGE);
             setStudents();
-        } catch (DAOException ex) {
-           Logger.getLogger(StudentGUI.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (DAOException | ModalException | StudentExistsException ex) {
+            Logger.getLogger(StudentGUI.class.getName()).log(Level.SEVERE, null, ex);
+            if (ex instanceof DAOException) {
+                JOptionPane.showMessageDialog(this, "Ocurrió un error inesperado", "Ups!", JOptionPane.ERROR_MESSAGE);   
+            } else if (ex instanceof StudentExistsException) {
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "DNI Ya cargado!", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }//GEN-LAST:event_buttonCreateActionPerformed
 
@@ -480,7 +513,7 @@ public class StudentGUI extends javax.swing.JFrame {
             if (txtDAO != null) {
                 try {
                     dao = txtDAO;
-                    setStudents();   
+                    setStudents();
                 } catch (DAOException ex) {
                     Logger.getLogger(StudentGUI.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -516,11 +549,21 @@ public class StudentGUI extends javax.swing.JFrame {
             setStudents();
         } catch (DAOException ex) {
            Logger.getLogger(StudentGUI.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ModalException ex) {
+            if (ex instanceof ModalException) {
+                Logger.getLogger(StudentGUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }//GEN-LAST:event_buttonUpdateActionPerformed
 
     private void buttonSeeDetailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSeeDetailActionPerformed
-        openDialog(CrudAction.READ);    
+        try {
+            openDialog(CrudAction.READ);
+        } catch (ModalException ex) {
+            if (ex instanceof ModalException) {
+                Logger.getLogger(StudentGUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }    
     }//GEN-LAST:event_buttonSeeDetailActionPerformed
 
     private void buttonDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonDeleteActionPerformed
@@ -536,12 +579,11 @@ public class StudentGUI extends javax.swing.JFrame {
                     JOptionPane.OK_OPTION, 
                     JOptionPane.QUESTION_MESSAGE);
             
-            if (resp==JOptionPane.YES_OPTION) {
+            if (resp == JOptionPane.YES_OPTION) {
                 dao.delete(studentSelected.getDni());
+                JOptionPane.showMessageDialog(this, "Se ha eliminado el alumno de forma exitosa", "Creación", JOptionPane.INFORMATION_MESSAGE);
+                setStudents();
             }
-            
-            JOptionPane.showMessageDialog(this, "Se ha eliminado el alumno de forma exitosa", "Creación", JOptionPane.INFORMATION_MESSAGE);
-            setStudents();
         } catch (DAOException ex) {
             Logger.getLogger(StudentGUI.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -585,7 +627,7 @@ public class StudentGUI extends javax.swing.JFrame {
         });
     }
     
-    private Student openDialog(CrudAction action) {
+    private Student openDialog(CrudAction action) throws ModalException {
         Student studentSelected = null;
         if (action != CrudAction.CREATE) {
             int selectedRow = tableStudents.getSelectedRow();
@@ -595,6 +637,9 @@ public class StudentGUI extends javax.swing.JFrame {
         StudentForm dialog = new StudentForm(this, true, action, studentSelected);
         dialog.setVisible(true);
         
+        if ("close".equals(dialog.getAction())) {
+            throw new ModalException("modal cerrado");
+        }
         return dialog.getStudent();
     }
     
@@ -603,8 +648,6 @@ public class StudentGUI extends javax.swing.JFrame {
         
         studentModel.setStudents(students);
         studentModel.fireTableDataChanged();
-
-        buttonDelete.setEnabled(true);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -4,6 +4,8 @@
  */
 package DAO;
 
+import Exceptions.DAOException;
+import Exceptions.StudentExistsException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
@@ -16,10 +18,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Student;
 
-/**
- *
- * @author alepr
- */
 public class StudentDAOSQL extends GenericDAO<Student, Integer> {
     
     private Connection connection;
@@ -69,7 +67,6 @@ public class StudentDAOSQL extends GenericDAO<Student, Integer> {
             throw new DAOException("Error al eliminar SQL INSERT ("+ex.getMessage()+")");
         }
 
-        // SELECT * FROM universidad.alumnos where DNI = 27;
         String readSQL = "SELECT * FROM alumnos where dni = ?";
         String findAllSQL = "SELECT * FROM alumnos";
         try {
@@ -95,8 +92,11 @@ public class StudentDAOSQL extends GenericDAO<Student, Integer> {
     }
     
     @Override
-    public void create(Student student) throws DAOException {
+    public void create(Student student) throws DAOException, StudentExistsException {
         try {
+            if (exist(student.getDni())) {
+                throw new StudentExistsException("El alumno con el DNI " + student.getDni().toString() + " ya se encuentra cargado");
+            }
             int index = 1;
             insertPS.setInt(index++, student.getDni());
             insertPS.setString(index++, student.getName());
@@ -105,9 +105,13 @@ public class StudentDAOSQL extends GenericDAO<Student, Integer> {
             insertPS.setString(index++, student.getAddress());
             insertPS.setString(index++, student.getPhone());
             insertPS.executeUpdate();
-        } catch (SQLException ex) {
+        } catch (SQLException | StudentExistsException ex) {
             Logger.getLogger(StudentDAOSQL.class.getName()).log(Level.SEVERE, null, ex);
-            throw new DAOException("Error al insertar ("+ex.getMessage()+")");
+            if (ex instanceof SQLException) {
+                throw new DAOException("Error al insertar ("+ex.getMessage()+")");
+            } else {
+                throw new StudentExistsException(ex.getMessage());
+            }
         }
     }
     
@@ -171,8 +175,6 @@ public class StudentDAOSQL extends GenericDAO<Student, Integer> {
                     alumnos.add(studentFromDB);
                 }
             }
-        // TODO: Exceptions
-        //catch (SQLException | DniPersonaException | NombreNullException | NombreVacioException ex) {
         } catch (SQLException ex) {
             Logger.getLogger(StudentDAOSQL.class.getName()).log(Level.SEVERE, null, ex);
             throw new DAOException("Error al leer ("+ex.getMessage()+")");
@@ -183,7 +185,13 @@ public class StudentDAOSQL extends GenericDAO<Student, Integer> {
     
     @Override
     public boolean exist(Integer id) throws DAOException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        try {
+            Student student = read(id);
+            return student != null;
+        } catch (DAOException ex) {
+            Logger.getLogger(StudentDAOSQL.class.getName()).log(Level.SEVERE, null, ex);
+            throw new DAOException("Error al validar si existe el DNI " + id.toString() + " ("+ex.getMessage()+")");
+        }
     }
     
     @Override

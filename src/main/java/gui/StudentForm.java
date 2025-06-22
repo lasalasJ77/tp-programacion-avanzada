@@ -4,39 +4,39 @@
  */
 package gui;
 
+import Exceptions.AddressException;
+import Exceptions.DNIException;
+import Exceptions.EmailException;
+import Exceptions.LastNameException;
+import Exceptions.NameException;
+import Exceptions.PhoneException;
 import enums.CrudAction;
-import java.time.LocalDate;
-import java.util.Calendar;
+import java.awt.Color;
+import javax.swing.border.LineBorder;
 import model.Student;
+import utils.Regex;
 
-/**
- *
- * @author alepr
- */
 public class StudentForm extends javax.swing.JDialog {
-
-    /**
-     * Creates new form StudentForms
-     */
     
-    private Student student;
+    private final Student student;
+    private String action;
     
     public Student getStudent() {
         return student;
     }
     
-    public StudentForm(java.awt.Frame parent, boolean modal, CrudAction action, Student studentSelected) {
+    public StudentForm(java.awt.Frame parent, boolean modal, CrudAction actionToDo, Student studentSelected) {
         super(parent, modal);
         initComponents();
         
         setLocationRelativeTo(null);
         
-        if (action == CrudAction.CREATE) {
+        if (actionToDo == CrudAction.CREATE) {
             dniInput.setEnabled(true);
             this.student = new Student();
         }
         else { 
-            if (action == CrudAction.READ) {
+            if (actionToDo == CrudAction.READ) {
                 buttonSave.setVisible(false);
                 nameInput.setEnabled(false);
                 lastNameInput.setEnabled(false);
@@ -53,6 +53,13 @@ public class StudentForm extends javax.swing.JDialog {
             
             this.student = studentSelected;
         }
+        
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                action = "close";
+            }
+        });
     }
 
     /**
@@ -79,10 +86,11 @@ public class StudentForm extends javax.swing.JDialog {
         emailInput = new javax.swing.JTextField();
         buttonSave = new javax.swing.JButton();
         buttonBack = new javax.swing.JButton();
+        errorLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        dniInput.setToolTipText("Inserte el host de MySQL");
+        dniInput.setToolTipText("Ingrese el DNI del alumno");
         dniInput.setEnabled(false);
         dniInput.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -96,7 +104,7 @@ public class StudentForm extends javax.swing.JDialog {
         nameLabel.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         nameLabel.setText("Nombre:");
 
-        nameInput.setToolTipText("Inserte el host de MySQL");
+        nameInput.setToolTipText("Ingrese el nombre del alumno");
         nameInput.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 nameInputActionPerformed(evt);
@@ -106,7 +114,7 @@ public class StudentForm extends javax.swing.JDialog {
         lastNameLabel.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         lastNameLabel.setText("Apellido");
 
-        lastNameInput.setToolTipText("Inserte el host de MySQL");
+        lastNameInput.setToolTipText("Ingrese el apellido del alumno");
         lastNameInput.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 lastNameInputActionPerformed(evt);
@@ -116,7 +124,7 @@ public class StudentForm extends javax.swing.JDialog {
         addressLabel.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         addressLabel.setText("Dirección:");
 
-        addressInput.setToolTipText("Inserte el host de MySQL");
+        addressInput.setToolTipText("Ingrese la dirección del alumno");
         addressInput.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addressInputActionPerformed(evt);
@@ -126,7 +134,7 @@ public class StudentForm extends javax.swing.JDialog {
         phoneLabel.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         phoneLabel.setText("Teléfono:");
 
-        phoneInput.setToolTipText("Inserte el host de MySQL");
+        phoneInput.setToolTipText("Ingrese el teléfono del alumno");
         phoneInput.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 phoneInputActionPerformed(evt);
@@ -136,7 +144,7 @@ public class StudentForm extends javax.swing.JDialog {
         emailLabel.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         emailLabel.setText("Email:");
 
-        emailInput.setToolTipText("Inserte el host de MySQL");
+        emailInput.setToolTipText("Ingrese el email del alumno");
         emailInput.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 emailInputActionPerformed(evt);
@@ -157,43 +165,44 @@ public class StudentForm extends javax.swing.JDialog {
             }
         });
 
+        errorLabel.setForeground(new java.awt.Color(255, 0, 0));
+
         javax.swing.GroupLayout studentFormLayout = new javax.swing.GroupLayout(studentForm);
         studentForm.setLayout(studentFormLayout);
         studentFormLayout.setHorizontalGroup(
             studentFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(studentFormLayout.createSequentialGroup()
                 .addContainerGap()
+                .addGroup(studentFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(errorLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(studentFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(studentFormLayout.createSequentialGroup()
+                            .addComponent(lastNameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(lastNameInput, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(studentFormLayout.createSequentialGroup()
+                            .addComponent(nameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(nameInput, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(studentFormLayout.createSequentialGroup()
+                            .addComponent(dnitLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(dniInput, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
                 .addGroup(studentFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(studentFormLayout.createSequentialGroup()
-                        .addGroup(studentFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(studentFormLayout.createSequentialGroup()
-                                .addComponent(lastNameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lastNameInput, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(studentFormLayout.createSequentialGroup()
-                                .addComponent(nameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(nameInput, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(studentFormLayout.createSequentialGroup()
-                                .addComponent(dnitLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(dniInput, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 46, Short.MAX_VALUE)
-                        .addGroup(studentFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(studentFormLayout.createSequentialGroup()
-                                .addComponent(emailLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(emailInput, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(studentFormLayout.createSequentialGroup()
-                                .addComponent(phoneLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(phoneInput, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(studentFormLayout.createSequentialGroup()
-                                .addComponent(addressLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(addressInput, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, studentFormLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(emailLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(emailInput, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, studentFormLayout.createSequentialGroup()
+                        .addComponent(phoneLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(phoneInput, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, studentFormLayout.createSequentialGroup()
+                        .addComponent(addressLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(addressInput, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, studentFormLayout.createSequentialGroup()
                         .addComponent(buttonBack, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(buttonSave, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -231,7 +240,8 @@ public class StudentForm extends javax.swing.JDialog {
                 .addGap(18, 18, 18)
                 .addGroup(studentFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(buttonBack)
-                    .addComponent(buttonSave))
+                    .addComponent(buttonSave)
+                    .addComponent(errorLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -280,21 +290,85 @@ public class StudentForm extends javax.swing.JDialog {
     }//GEN-LAST:event_emailInputActionPerformed
 
     private void buttonBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonBackActionPerformed
+        this.action = "close";
         this.setVisible(false);
     }//GEN-LAST:event_buttonBackActionPerformed
 
     private void buttonSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSaveActionPerformed
-        student.setDni(Integer.valueOf(dniInput.getText()));
+        Student auxStudent = new Student();
 
-       student.setName(nameInput.getText());
-       student.setLastName(lastNameInput.getText());
-       student.setEmail(emailInput.getText());
-       student.setAddress(addressInput.getText());
-       student.setPhone(phoneInput.getText());
-       
-       this.setVisible(false);
+        try {
+            auxStudent.setDni(Integer.valueOf(dniInput.getText()));
+        } catch (NumberFormatException ex) {
+            auxStudent.setDni(0);
+        }
+        
+        auxStudent.setName(nameInput.getText());
+        auxStudent.setLastName(lastNameInput.getText());
+        auxStudent.setEmail(emailInput.getText());
+        auxStudent.setAddress(addressInput.getText());
+        auxStudent.setPhone(phoneInput.getText());
+        
+        if (studentIsValid(auxStudent)) {
+            student.setDni(auxStudent.getDni());
+
+            student.setName(auxStudent.getName());
+            student.setLastName(auxStudent.getLastName());
+            student.setEmail(auxStudent.getEmail());
+            student.setAddress(auxStudent.getAddress());
+            student.setPhone(auxStudent.getPhone());
+
+            this.action = "save";
+            this.setVisible(false);
+        }
     }//GEN-LAST:event_buttonSaveActionPerformed
 
+    private Boolean studentIsValid(Student student) {
+        try {
+            errorLabel.setText("");
+            emailInput.setBorder(new LineBorder(Color.gray, 1));
+            dniInput.setBorder(new LineBorder(Color.gray, 1));
+            phoneInput.setBorder(new LineBorder(Color.gray, 1));
+            nameInput.setBorder(new LineBorder(Color.gray, 1));
+            lastNameInput.setBorder(new LineBorder(Color.gray, 1));
+            addressInput.setBorder(new LineBorder(Color.gray, 1));
+
+            Regex.checkStudent(student);
+            return true;
+        } catch (DNIException | EmailException | PhoneException | NameException | LastNameException | AddressException ex) {
+            if (ex instanceof AddressException) {
+                addressInput.setBorder(new LineBorder(Color.RED, 1));
+                errorLabel.setText("La dirección es inválido");
+            }
+            if (ex instanceof EmailException) {
+                emailInput.setBorder(new LineBorder(Color.RED, 1));
+                errorLabel.setText("El email es inválido");
+            }
+            if (ex instanceof DNIException) {
+                dniInput.setBorder(new LineBorder(Color.RED, 1));
+                errorLabel.setText("El DNI es inválido");
+            }
+            if (ex instanceof PhoneException) {
+                phoneInput.setBorder(new LineBorder(Color.RED, 1));
+                errorLabel.setText("El teléfono es inválido");
+            }
+            if (ex instanceof NameException) {
+                nameInput.setBorder(new LineBorder(Color.RED, 1));
+                errorLabel.setText("El nombre es inválido");
+            }
+            if (ex instanceof LastNameException) {
+                lastNameInput.setBorder(new LineBorder(Color.RED, 1));
+                errorLabel.setText("El apellido es inválido");
+            }
+            
+            return false;
+        }
+    }
+    
+    public String getAction() {
+        return this.action;
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -349,6 +423,7 @@ public class StudentForm extends javax.swing.JDialog {
     private javax.swing.JLabel dnitLabel;
     private javax.swing.JTextField emailInput;
     private javax.swing.JLabel emailLabel;
+    private javax.swing.JLabel errorLabel;
     private javax.swing.JTextField lastNameInput;
     private javax.swing.JLabel lastNameLabel;
     private javax.swing.JTextField nameInput;

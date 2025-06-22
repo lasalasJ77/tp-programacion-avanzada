@@ -75,7 +75,7 @@ public class Student {
     
     @Override
     public String toString() {
-        return this.dni.toString() + '\t' + this.lastName + '\t' + this.name + '\t' + this.address + '\t' + this.email + '\t' + this.phone + '\t' + this.isDeleted();
+        return this.dni.toString() + '\t' + this.lastName + '\t' + this.name + '\t' + this.email + '\t' + this.phone + '\t' + this.address + '\t' + this.isDeleted();
     }
     
     public static Student str2Student(String[] fieldsStudent) {

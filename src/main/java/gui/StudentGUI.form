@@ -234,7 +234,7 @@
         </Component>
         <Component class="javax.swing.JTextField" name="userInput">
           <Properties>
-            <Property name="toolTipText" type="java.lang.String" value="Inserte el host de MySQL"/>
+            <Property name="toolTipText" type="java.lang.String" value="Inserte el usuario de MySQL"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="userInputActionPerformed"/>
@@ -254,7 +254,7 @@
         </Component>
         <Component class="javax.swing.JTextField" name="portInput">
           <Properties>
-            <Property name="toolTipText" type="java.lang.String" value="Inserte el host de MySQL"/>
+            <Property name="toolTipText" type="java.lang.String" value="Inserte el puerto de MySQL"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="portInputActionPerformed"/>
@@ -339,6 +339,7 @@
         <Component class="javax.swing.JButton" name="buttonTXT">
           <Properties>
             <Property name="text" type="java.lang.String" value="..."/>
+            <Property name="toolTipText" type="java.lang.String" value="Seleccionar archivo"/>
             <Property name="horizontalTextPosition" type="int" value="0"/>
             <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
               <Insets value="[2, 14, 2, 14]"/>
@@ -448,6 +449,7 @@
         <Component class="javax.swing.JButton" name="buttonCreate">
           <Properties>
             <Property name="text" type="java.lang.String" value="Crear"/>
+            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="buttonCreateActionPerformed"/>
@@ -456,6 +458,7 @@
         <Component class="javax.swing.JButton" name="buttonUpdate">
           <Properties>
             <Property name="text" type="java.lang.String" value="Modificar"/>
+            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="buttonUpdateActionPerformed"/>
@@ -464,6 +467,7 @@
         <Component class="javax.swing.JButton" name="buttonDelete">
           <Properties>
             <Property name="text" type="java.lang.String" value="Eliminar"/>
+            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="buttonDeleteActionPerformed"/>
@@ -472,6 +476,7 @@
         <Component class="javax.swing.JButton" name="buttonSeeDetail">
           <Properties>
             <Property name="text" type="java.lang.String" value="Ver detalle"/>
+            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="buttonSeeDetailActionPerformed"/>
@@ -479,7 +484,8 @@
         </Component>
         <Component class="javax.swing.JCheckBox" name="buttonSeeDeleted">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Ver eliminados"/>
+            <Property name="text" type="java.lang.String" value="Ver inactivos"/>
+            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="buttonSeeDeletedActionPerformed"/>

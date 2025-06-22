@@ -1,5 +1,7 @@
 package DAO;
 
+import Exceptions.DAOException;
+import Exceptions.StudentExistsException;
 import java.util.List;
 
 /**
@@ -7,7 +9,7 @@ import java.util.List;
  * @param <K>
  */
 public abstract class GenericDAO<T, K> {
-    public abstract void create(T obj) throws DAOException;
+    public abstract void create(T obj) throws DAOException, StudentExistsException;
     public abstract void update(T obj) throws DAOException;
     public abstract void delete(Integer dni) throws DAOException;
     public abstract T read(Integer dni) throws DAOException;

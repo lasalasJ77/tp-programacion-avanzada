@@ -10,10 +10,6 @@ import model.Student;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 
-/**
- *
- * @author alepr
- */
 public class StudentTableModel extends AbstractTableModel {
     private final String[] headers = {"DNI", "Nombre", "Apellido", "Estado"};
     private List<Student> students;
@@ -24,6 +20,10 @@ public class StudentTableModel extends AbstractTableModel {
     
     public void setStudents(List<Student> students) {
         this.students = students;
+    }
+    
+    public Student getStudentByRow(int row) {
+        return this.students.get(row);
     }
     
     @Override
@@ -45,21 +45,21 @@ public class StudentTableModel extends AbstractTableModel {
     }
 
     @Override
-    public Object getValueAt(int fila, int col) {
-        Student alumno = students.get(fila);
+    public Object getValueAt(int row, int col) {
+        Student student = students.get(row);
         switch (col) {
             case 0 -> {
-                return alumno.getDni();
+                return student.getDni();
             }
             case 1 -> {
-                return alumno.getName();
+                return student.getName();
             }
             case 2 -> {
-                return alumno.getLastName();
+                return student.getLastName();
             }
             case 3 -> {
-                if (alumno.isDeleted()) {
-                    return "Bochado";
+                if (student.isDeleted()) {
+                    return "Inactivo";
                 }
                 return "Activo";
             }

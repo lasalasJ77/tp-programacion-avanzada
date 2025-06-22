@@ -1,7 +1,8 @@
 package DAO;
 
 
-import DAO.DAOException;
+import Exceptions.DAOFactoryException;
+import Exceptions.DAOException;
 import DAO.GenericDAO;
 import DAO.StudentDAOSQL;
 import DAO.StudentDAOTXT;
@@ -14,10 +15,6 @@ import java.util.logging.Logger;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 
-/**
- *
- * @author alepr
- */
 public class DAOFactory {
     private static DAOFactory instance;
     public static final String TYPE_DAO = "TYPE_DAO";
