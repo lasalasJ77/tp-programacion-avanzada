@@ -13,7 +13,7 @@ public class Regex {
     public static final String REGEX_DNI = "^\\d{7,8}$";
     public static final String REGEX_TELEFONO = "^\\d{8,15}$";
     public static final String REGEX_NAME_LAST_NAME = "^[A-Za-zÁÉÍÓÚáéíóúÑñ\\s'-]{2,50}$";
-    public static final String REGEX_ADDRESS = "^[A-Za-zÁÉÍÓÚáéíóúÑñ\\s'-]{2,30}$";
+    public static final String REGEX_ADDRESS = "^[A-Za-zÁÉÍÓÚáéíóúÑñ\\s'-]*[0-9]{1,10}$";
     
     public static boolean isEmailValid(String email) {
         return email != null && email.matches(REGEX_EMAIL);
