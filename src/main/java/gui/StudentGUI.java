@@ -20,11 +20,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Student;
 import enums.CrudAction;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 public class StudentGUI extends javax.swing.JFrame {
     
@@ -508,6 +508,8 @@ public class StudentGUI extends javax.swing.JFrame {
     private void repositorySelectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_repositorySelectActionPerformed
         panelTXT.setVisible(repositorySelect.getSelectedIndex() == 0);
         panelMySQL.setVisible(repositorySelect.getSelectedIndex() == 1);
+        
+        studentModel.setStudents(new ArrayList<>());
         
         if (repositorySelect.getSelectedIndex() == 0) {
             if (txtDAO != null) {
