@@ -14,7 +14,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -40,6 +39,7 @@ public class StudentDAOTXT extends GenericDAO<Student, Integer> {
             if (exist(student.getDni())) {
                 throw new StudentExistsException("El alumno con el DNI " + student.getDni() + " ya existe");
             }
+            // Me posiciono al final del TXT
             raf.seek(raf.length());
             
             raf.writeBytes(student.toString()+System.lineSeparator());
@@ -152,11 +152,11 @@ public class StudentDAOTXT extends GenericDAO<Student, Integer> {
     public boolean exist(Integer dni) throws DAOException {
         try {
             raf.seek(0); // Me posocionó al incio
-            String linea;
-            String[] camposAlu;
-            while ((linea = raf.readLine())!=null) {
-                camposAlu = linea.split(String.valueOf(Student.DELIM));
-                if (Integer.valueOf(camposAlu[0]).equals(dni)) {
+            String line;
+            String[] fieldsStudent;
+            while ((line = raf.readLine())!=null) {
+                fieldsStudent = line.split(String.valueOf(Student.DELIM));
+                if (Integer.valueOf(fieldsStudent[0]).equals(dni)) {
                     return true;
                 }
             }

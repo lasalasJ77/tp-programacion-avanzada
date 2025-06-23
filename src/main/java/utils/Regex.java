@@ -19,7 +19,7 @@ public class Regex {
         return email != null && email.matches(REGEX_EMAIL);
     }
 
-    public static boolean esDniValid(Integer dni) {
+    public static boolean isDniValid(Integer dni) {
         return dni != null && dni.toString().matches(REGEX_DNI);
     }
 
@@ -40,7 +40,7 @@ public class Regex {
     }
     
     public static void checkStudent(Student student) throws EmailException, DNIException, PhoneException, NameException, LastNameException, AddressException {
-        if (!esDniValid(student.getDni())) {
+        if (!isDniValid(student.getDni())) {
             throw new DNIException("DNI inválido");
         }
         if (!isAddressValid(student.getAddress())) {

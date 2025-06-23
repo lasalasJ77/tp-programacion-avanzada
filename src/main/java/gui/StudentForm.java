@@ -54,6 +54,7 @@ public class StudentForm extends javax.swing.JDialog {
             this.student = studentSelected;
         }
         
+        // Capturamos evento de cerrar modal
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent e) {

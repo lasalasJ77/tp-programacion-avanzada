@@ -7,7 +7,6 @@ package DAO;
 import Exceptions.DAOException;
 import Exceptions.StudentExistsException;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -30,7 +29,6 @@ public class StudentDAOSQL extends GenericDAO<Student, Integer> {
     public StudentDAOSQL(String host, String port, String user, String password) throws DAOException {
         try {
             String url = "jdbc:mysql://" + host + ":" + port + "/alumnos";
-            // jdbc:mysql://localhost:3306/universidad?user=root
             connection = DriverManager.getConnection(url, user, password);
         } catch (SQLException ex) {
             Logger.getLogger(StudentDAOSQL.class.getName()).log(Level.SEVERE, null, ex);
@@ -140,7 +138,6 @@ public class StudentDAOSQL extends GenericDAO<Student, Integer> {
             if (resultSet.next()) {
                 return getStudentFromDB(resultSet);
             }
-        // TODO: Agregar excepciones
         } catch (SQLException ex) {
             Logger.getLogger(StudentDAOSQL.class.getName()).log(Level.SEVERE, null, ex);
             throw new DAOException("Error al leer ("+ex.getMessage()+")");
@@ -148,9 +145,7 @@ public class StudentDAOSQL extends GenericDAO<Student, Integer> {
         
         return null;
     }
-    
-    // TODO: Agregar excepciones
-    // , NombreVacioException, NombreNullException, DniPersonaException
+
     private Student getStudentFromDB(ResultSet resultSet) throws SQLException {
         Student student = new Student();
         student.setDni(resultSet.getInt("dni"));

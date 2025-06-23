@@ -509,6 +509,7 @@ public class StudentGUI extends javax.swing.JFrame {
         panelTXT.setVisible(repositorySelect.getSelectedIndex() == 0);
         panelMySQL.setVisible(repositorySelect.getSelectedIndex() == 1);
         
+        // Limpiamos la tabla al cambiar de repositorio
         studentModel.setStudents(new ArrayList<>());
         
         if (repositorySelect.getSelectedIndex() == 0) {
