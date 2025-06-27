@@ -42,7 +42,7 @@ public class StudentDAOTXT extends GenericDAO<Student, Integer> {
             // Me posiciono al final del TXT
             raf.seek(raf.length());
             
-            raf.writeBytes(student.toString()+System.lineSeparator());
+            raf.writeBytes(student.toFixedLengthString()+System.lineSeparator());
         } catch (StudentExistsException ex) {
             Logger.getLogger(StudentDAOTXT.class.getName()).log(Level.SEVERE, null, ex);
             throw new StudentExistsException(ex.getMessage());
@@ -71,55 +71,40 @@ public class StudentDAOTXT extends GenericDAO<Student, Integer> {
         
         return null;
     }
-
+    
     @Override
     public void update(Student student) throws DAOException {
         try {
-            File tempFile = File.createTempFile("student_temp", ".txt");
-            
-            boolean updated;
-            try (BufferedWriter tempWriter = new BufferedWriter(new FileWriter(tempFile))) {
-                raf.seek(0);
-                String line;
-                updated = false;
-                while ((line = raf.readLine()) != null) {
-                    String[] fields = line.split(String.valueOf(Student.DELIM));
-                    int currentDni = Integer.parseInt(fields[0]);
-                    
-                    if (currentDni == student.getDni()) {
-                        tempWriter.write(student.toString());
-                        updated = true;
-                    } else {
-                        tempWriter.write(line);
+            raf.seek(0);
+            String line;
+            long position;
+
+            while ((line = raf.readLine()) != null) {
+                position = raf.getFilePointer() - line.length() - System.lineSeparator().length();
+
+                String[] fields = line.split(String.valueOf(Student.DELIM));
+                if (fields.length > 1 && Integer.valueOf(fields[0]).equals(student.getDni())) {
+                    raf.seek(position);
+                    String fixedLine = student.toFixedLengthString();
+
+                    if (fixedLine.length() != line.length()) {
+                        throw new DAOException("La nueva línea no tiene la misma longitud que la original.");
                     }
-                    tempWriter.newLine();
+
+                    raf.writeBytes(fixedLine);
+                    break;
                 }
             }
-            
-            if (!updated) {
-                tempFile.delete();
-                throw new DAOException("No se encontró el alumno a actualizar.");
-            }
-            
-            raf.setLength(0);
-            try (BufferedReader tempReader = new BufferedReader(new FileReader(tempFile))) {
-                String newLine;
-                
-                while((newLine = tempReader.readLine()) != null) {
-                    raf.writeBytes(newLine + System.lineSeparator());
-                }
-            }
-            tempFile.delete();
         } catch (IOException ex) {
-            throw new DAOException("Error al actualizar alumno " + ex.getMessage());
+            throw new DAOException("Error al actualizar alumno: " + ex.getMessage());
         }
     }
-
+ 
     @Override
-    public void delete(Integer dni) throws DAOException {
+    public void changeState(Integer dni, Boolean deleted) throws DAOException {
         Student student2Read = read(dni);
         if (student2Read != null) {
-            student2Read.setDeleted(true);
+            student2Read.setDeleted(deleted);
             update(student2Read);
         }
         else {

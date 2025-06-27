@@ -1,11 +1,14 @@
 package utils;
 
 import Exceptions.AddressException;
+import Exceptions.CalendarDateException;
 import Exceptions.DNIException;
 import Exceptions.EmailException;
 import Exceptions.LastNameException;
 import Exceptions.NameException;
 import Exceptions.PhoneException;
+import java.time.LocalDate;
+import java.time.Month;
 import model.Student;
 
 public class Regex {
@@ -39,7 +42,13 @@ public class Regex {
         return address != null && address.matches(REGEX_ADDRESS);
     }
     
-    public static void checkStudent(Student student) throws EmailException, DNIException, PhoneException, NameException, LastNameException, AddressException {
+    public static boolean isDateValid(LocalDate date) {
+        LocalDate now = LocalDate.now();
+        LocalDate oldDate = LocalDate.of(2000, Month.JANUARY, 1);
+        return now.equals(date) || (date.isBefore(now) && date.isAfter(oldDate));
+    }
+    
+    public static void checkStudent(Student student) throws EmailException, DNIException, PhoneException, NameException, LastNameException, AddressException, CalendarDateException {
         if (!isDniValid(student.getDni())) {
             throw new DNIException("DNI inválido");
         }
@@ -57,6 +66,9 @@ public class Regex {
         }
         if (!isEmailValid(student.getEmail())) {
             throw new EmailException("Email inválido");
+        }
+        if (!isDateValid(student.getDateAdmission())) {
+            throw new CalendarDateException("Fecha inválido");
         }
     }
 }

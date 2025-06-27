@@ -12,6 +12,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,8 +39,8 @@ public class StudentDAOSQL extends GenericDAO<Student, Integer> {
         }
         
         String insertSQL = "INSERT INTO alumnos\n" +
-                            "(dni, nombre, apellido, email, direccion, telefono)\n" +
-                            "VALUES (?, ?, ?, ?, ?, ?);";
+                            "(dni, nombre, apellido, email, direccion, telefono, fechaIngreso, promedio)\n" +
+                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
         try {
             insertPS = connection.prepareStatement(insertSQL);
         } catch (SQLException ex) {
@@ -46,7 +49,7 @@ public class StudentDAOSQL extends GenericDAO<Student, Integer> {
         }
         
         String updateSQL = "UPDATE alumnos\n" +
-                            "SET nombre = ?, apellido = ?, email = ?, direccion = ?, telefono = ?\n" +
+                            "SET nombre = ?, apellido = ?, email = ?, direccion = ?, telefono = ?, fechaIngreso = ?, promedio = ?\n" +
                             "WHERE dni = ?;";
         try {
             updatePS = connection.prepareStatement(updateSQL);
@@ -77,10 +80,10 @@ public class StudentDAOSQL extends GenericDAO<Student, Integer> {
     }
     
     @Override
-    public void delete(Integer dni) throws DAOException {
+    public void changeState(Integer dni, Boolean deleted) throws DAOException {
         try {
             int index = 1;
-            deletePS.setInt(index++, 1);
+            deletePS.setInt(index++, deleted ? 1 : 0);
             deletePS.setInt(index++, dni);
             deletePS.executeUpdate();
         } catch (SQLException ex) {
@@ -96,12 +99,16 @@ public class StudentDAOSQL extends GenericDAO<Student, Integer> {
                 throw new StudentExistsException("El alumno con el DNI " + student.getDni().toString() + " ya se encuentra cargado");
             }
             int index = 1;
+            
+            LocalDate date = student.getDateAdmission();
             insertPS.setInt(index++, student.getDni());
             insertPS.setString(index++, student.getName());
             insertPS.setString(index++, student.getLastName());
             insertPS.setString(index++, student.getEmail());
             insertPS.setString(index++, student.getAddress());
             insertPS.setString(index++, student.getPhone());
+            insertPS.setDate(index++, new Date(date.getYear(), date.getMonthValue(), date.getDayOfMonth()));
+            insertPS.setDouble(index++, student.getAverage());
             insertPS.executeUpdate();
         } catch (SQLException | StudentExistsException ex) {
             Logger.getLogger(StudentDAOSQL.class.getName()).log(Level.SEVERE, null, ex);
@@ -117,12 +124,16 @@ public class StudentDAOSQL extends GenericDAO<Student, Integer> {
     public void update(Student student) throws DAOException {
         try {
             int index = 1;
+            LocalDate date = student.getDateAdmission();
+
             updatePS.setString(index++, student.getName());
             updatePS.setString(index++, student.getLastName());
             updatePS.setString(index++, student.getEmail());
             updatePS.setString(index++, student.getAddress());
             updatePS.setString(index++, student.getPhone());
             updatePS.setInt(index++, student.getDni());
+            insertPS.setDate(index++, new Date(date.getYear(), date.getMonthValue(), date.getDayOfMonth()));
+            insertPS.setDouble(index++, student.getAverage());
             updatePS.executeUpdate();
         } catch (SQLException ex) {
             Logger.getLogger(StudentDAOSQL.class.getName()).log(Level.SEVERE, null, ex);
@@ -147,6 +158,8 @@ public class StudentDAOSQL extends GenericDAO<Student, Integer> {
     }
 
     private Student getStudentFromDB(ResultSet resultSet) throws SQLException {
+        Date date = resultSet.getDate("fechaIngreso");
+        
         Student student = new Student();
         student.setDni(resultSet.getInt("dni"));
         student.setName(resultSet.getString("nombre"));
@@ -155,6 +168,8 @@ public class StudentDAOSQL extends GenericDAO<Student, Integer> {
         student.setEmail(resultSet.getString("email"));
         student.setPhone(resultSet.getString("telefono"));
         student.setDeleted(resultSet.getBoolean("eliminado"));
+        student.setDateAdmission(LocalDate.of(date.getYear(), date.getMonth(), date.getDate()));
+        student.setAverage(resultSet.getDouble("promedio"));
         return student;
     }
     

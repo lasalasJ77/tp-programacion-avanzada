@@ -43,6 +43,8 @@ public class StudentGUI extends javax.swing.JFrame {
         
         studentModel = new StudentTableModel();
         tableStudents.setModel(studentModel);
+        
+        buttonActivate.setVisible(false);
         initListeners();
     }
 
@@ -50,14 +52,19 @@ public class StudentGUI extends javax.swing.JFrame {
     tableStudents.getSelectionModel().addListSelectionListener((ListSelectionEvent event) -> {
         if (event.getValueIsAdjusting()) return;
         
-        
         boolean rowSelected = tableStudents.getSelectedRow() != -1;
         
         buttonDelete.setEnabled(rowSelected);
+        buttonActivate.setEnabled(rowSelected);
+
         if (rowSelected) {
             Student student = studentModel.getStudentByRow(tableStudents.getSelectedRow());
             if (student.isDeleted()) {
-                buttonDelete.setEnabled(false);
+                buttonDelete.setVisible(false);
+                buttonActivate.setVisible(true);
+            } else {
+                buttonDelete.setVisible(true);
+                buttonActivate.setVisible(false);
             }
         }
         
@@ -102,6 +109,7 @@ public class StudentGUI extends javax.swing.JFrame {
         buttonDelete = new javax.swing.JButton();
         buttonSeeDetail = new javax.swing.JButton();
         buttonSeeDeleted = new javax.swing.JCheckBox();
+        buttonActivate = new javax.swing.JButton();
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
@@ -359,12 +367,20 @@ public class StudentGUI extends javax.swing.JFrame {
             }
         });
 
+        buttonActivate.setText("Activar");
+        buttonActivate.setEnabled(false);
+        buttonActivate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonActivateActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panelActionsLayout = new javax.swing.GroupLayout(panelActions);
         panelActions.setLayout(panelActionsLayout);
         panelActionsLayout.setHorizontalGroup(
             panelActionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelActionsLayout.createSequentialGroup()
-                .addContainerGap(42, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(panelActionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(buttonSeeDeleted)
                     .addGroup(panelActionsLayout.createSequentialGroup()
@@ -372,10 +388,12 @@ public class StudentGUI extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(buttonUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
+                        .addComponent(buttonActivate, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(buttonDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(buttonSeeDetail, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(43, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panelActionsLayout.setVerticalGroup(
             panelActionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -385,7 +403,8 @@ public class StudentGUI extends javax.swing.JFrame {
                     .addComponent(buttonCreate)
                     .addComponent(buttonUpdate)
                     .addComponent(buttonDelete)
-                    .addComponent(buttonSeeDetail))
+                    .addComponent(buttonSeeDetail)
+                    .addComponent(buttonActivate))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(buttonSeeDeleted)
                 .addContainerGap())
@@ -583,7 +602,7 @@ public class StudentGUI extends javax.swing.JFrame {
                     JOptionPane.QUESTION_MESSAGE);
             
             if (resp == JOptionPane.YES_OPTION) {
-                dao.delete(studentSelected.getDni());
+                dao.changeState(studentSelected.getDni(), true);
                 JOptionPane.showMessageDialog(this, "Se ha eliminado el alumno de forma exitosa", "Creación", JOptionPane.INFORMATION_MESSAGE);
                 setStudents();
             }
@@ -591,6 +610,28 @@ public class StudentGUI extends javax.swing.JFrame {
             Logger.getLogger(StudentGUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_buttonDeleteActionPerformed
+
+    private void buttonActivateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonActivateActionPerformed
+        try {
+            int selectedRow = tableStudents.getSelectedRow();
+            if (selectedRow < 0) {
+                return;
+            }
+            Student studentSelected = studentModel.getStudents().get(selectedRow);
+            
+            int resp = JOptionPane.showConfirmDialog(this, "¿Está seguro que desea activar el alumno?", "Activar", 
+                    JOptionPane.OK_OPTION, 
+                    JOptionPane.QUESTION_MESSAGE);
+            
+            if (resp == JOptionPane.YES_OPTION) {
+                dao.changeState(studentSelected.getDni(), false);
+                JOptionPane.showMessageDialog(this, "Se ha activado el alumno de forma exitosa", "Creación", JOptionPane.INFORMATION_MESSAGE);
+                setStudents();
+            }
+        } catch (DAOException ex) {
+            Logger.getLogger(StudentGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_buttonActivateActionPerformed
 
     /**
      * @param args the command line arguments
@@ -654,6 +695,7 @@ public class StudentGUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton buttonActivate;
     private javax.swing.JButton buttonConnect;
     private javax.swing.JButton buttonCreate;
     private javax.swing.JButton buttonDelete;

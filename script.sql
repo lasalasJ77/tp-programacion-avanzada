@@ -10,6 +10,8 @@ CREATE TABLE alumnos (
     eliminado BOOLEAN DEFAULT false,
     email VARCHAR(100),
     telefono VARCHAR(20),
-    direccion VARCHAR(200)
+    direccion VARCHAR(200),
+    fechaIngreso DATE,
+    promedio DECIMAL(4, 2)
 );
 
