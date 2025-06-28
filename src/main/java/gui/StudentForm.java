@@ -5,6 +5,7 @@
 package gui;
 
 import Exceptions.AddressException;
+import Exceptions.AverageException;
 import Exceptions.CalendarDateException;
 import Exceptions.DNIException;
 import Exceptions.EmailException;
@@ -366,10 +367,14 @@ public class StudentForm extends javax.swing.JDialog {
         }
         
         Calendar cal = calendarInput.getCalendar();
-       
-        auxStudent.setDateAdmission(LocalDate.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH)+1, cal.get(Calendar.DAY_OF_MONTH)));
         
-        auxStudent.setAverage(Double.valueOf(averageInput.getText()));
+        if (cal != null) {
+            auxStudent.setDateAdmission(LocalDate.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH)+1, cal.get(Calendar.DAY_OF_MONTH)));
+        }
+        
+        if (!averageInput.getText().isEmpty()) {
+            auxStudent.setAverage(Double.valueOf(averageInput.getText()));
+        }
         
         auxStudent.setName(nameInput.getText());
         auxStudent.setLastName(lastNameInput.getText());
@@ -411,7 +416,7 @@ public class StudentForm extends javax.swing.JDialog {
 
             Regex.checkStudent(student);
             return true;
-        } catch (DNIException | EmailException | PhoneException | NameException | LastNameException | AddressException | CalendarDateException ex) {
+        } catch (DNIException | EmailException | PhoneException | NameException | LastNameException | AddressException | CalendarDateException | AverageException ex) {
             if (ex instanceof AddressException) {
                 addressInput.setBorder(new LineBorder(Color.RED, 1));
                 errorLabel.setText("La dirección es inválido");
@@ -439,6 +444,10 @@ public class StudentForm extends javax.swing.JDialog {
             if (ex instanceof CalendarDateException) {
                 calendarInput.setBorder(new LineBorder(Color.RED, 1));
                 errorLabel.setText("La fecha es inválida");
+            }
+            if (ex instanceof AverageException) {
+                averageInput.setBorder(new LineBorder(Color.RED, 1));
+                errorLabel.setText("El promedio es inválido");
             }
             
             return false;

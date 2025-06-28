@@ -1,6 +1,7 @@
 package utils;
 
 import Exceptions.AddressException;
+import Exceptions.AverageException;
 import Exceptions.CalendarDateException;
 import Exceptions.DNIException;
 import Exceptions.EmailException;
@@ -43,12 +44,19 @@ public class Regex {
     }
     
     public static boolean isDateValid(LocalDate date) {
+        if (date == null) {
+            return false;
+        }
         LocalDate now = LocalDate.now();
         LocalDate oldDate = LocalDate.of(2000, Month.JANUARY, 1);
         return now.equals(date) || (date.isBefore(now) && date.isAfter(oldDate));
     }
     
-    public static void checkStudent(Student student) throws EmailException, DNIException, PhoneException, NameException, LastNameException, AddressException, CalendarDateException {
+    public static boolean isAverageValid(Double average ) {
+        return average != null && average >= 0 && average <= 10;
+    }
+    
+    public static void checkStudent(Student student) throws EmailException, DNIException, PhoneException, NameException, LastNameException, AddressException, CalendarDateException, AverageException {
         if (!isDniValid(student.getDni())) {
             throw new DNIException("DNI inválido");
         }
@@ -69,6 +77,9 @@ public class Regex {
         }
         if (!isDateValid(student.getDateAdmission())) {
             throw new CalendarDateException("Fecha inválido");
+        }
+        if (!isAverageValid(student.getAverage())) {
+            throw new AverageException("Promedio inválido");
         }
     }
 }
