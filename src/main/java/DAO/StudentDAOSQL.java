@@ -131,9 +131,11 @@ public class StudentDAOSQL extends GenericDAO<Student, Integer> {
             updatePS.setString(index++, student.getEmail());
             updatePS.setString(index++, student.getAddress());
             updatePS.setString(index++, student.getPhone());
+            
+            updatePS.setDate(index++, new Date(date.getYear(), date.getMonthValue(), date.getDayOfMonth()));
+            updatePS.setDouble(index++, student.getAverage());
+            
             updatePS.setInt(index++, student.getDni());
-            insertPS.setDate(index++, new Date(date.getYear(), date.getMonthValue(), date.getDayOfMonth()));
-            insertPS.setDouble(index++, student.getAverage());
             updatePS.executeUpdate();
         } catch (SQLException ex) {
             Logger.getLogger(StudentDAOSQL.class.getName()).log(Level.SEVERE, null, ex);

@@ -77,11 +77,10 @@ public class StudentDAOTXT extends GenericDAO<Student, Integer> {
         try {
             raf.seek(0);
             String line;
-            long position;
+            long position = 0;
 
             while ((line = raf.readLine()) != null) {
-                position = raf.getFilePointer() - line.length() - System.lineSeparator().length();
-
+                
                 String[] fields = line.split(String.valueOf(Student.DELIM));
                 if (fields.length > 1 && Integer.valueOf(fields[0]).equals(student.getDni())) {
                     raf.seek(position);
@@ -94,6 +93,7 @@ public class StudentDAOTXT extends GenericDAO<Student, Integer> {
                     raf.writeBytes(fixedLine);
                     break;
                 }
+                position = raf.getFilePointer();
             }
         } catch (IOException ex) {
             throw new DAOException("Error al actualizar alumno: " + ex.getMessage());
